@@ -16,15 +16,14 @@ export const getNextRoutes = (
 	src: string = ".",
 	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
 ) => {
+  const absoluteSrc = path.resolve(src);
   const dottedExtensions = extensions.map((ext) => ext.startsWith(".") ? ext : `.${ext}`);
 
 	// next app routes
-  const appPath = path.join(src, 'app');
-	const appPaths = getFilePaths(appPath, dottedExtensions, 'page')
+	const appPaths = getFilePaths(path.join(absoluteSrc, 'app'), dottedExtensions, 'page')
 
 	// next pages routes
-  const pagesPath = path.join(src, 'pages');
-	const pagePaths = getFilePaths(pagesPath, dottedExtensions).filter((filePath) => !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`));
+	const pagePaths = getFilePaths(path.join(absoluteSrc, 'pages'), dottedExtensions).filter((filePath) => !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`));
 
 	/**
   appRoutes = [
@@ -38,8 +37,7 @@ export const getNextRoutes = (
   */
 	const appRoutes = appPaths
 		.map((filePath) => {
-			const parts = filePath.split(src)[1]?.split(path.sep).filter(Boolean) ?? [];
-
+			const parts = filePath.split(absoluteSrc)[1]?.split(path.sep).filter(Boolean) ?? [];
 			const url: string[] = [];
 
 			for (let i = 0; i < parts.length; i++) {
@@ -81,7 +79,7 @@ export const getNextRoutes = (
   */
 	const pagesRoutes = pagePaths
 		.map((filePath) => {
-			const parts = filePath.split(src)[1]?.split(path.sep).filter(Boolean) ?? [];
+			const parts = filePath.split(absoluteSrc)[1]?.split(path.sep).filter(Boolean) ?? [];
 
 			const url: string[] = [];
 
@@ -109,6 +107,5 @@ export const getNextRoutes = (
 	const unDuplicatedRoutes = Array.from(
 		new Set([...appRoutes, ...pagesRoutes])
 	);
-
 	return unDuplicatedRoutes;
 }
