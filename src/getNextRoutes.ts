@@ -43,8 +43,8 @@ export const getNextRoutes = (
   ]
   */
 	const appRoutes = appPaths
-		.map((path) => {
-			const parts = path.split(src)[1]?.split("/").filter(Boolean) ?? [];
+		.map((filePath) => {
+			const parts = filePath.split(src)[1]?.split(path.sep).filter(Boolean) ?? [];
 
 			const url: string[] = [];
 
@@ -86,8 +86,8 @@ export const getNextRoutes = (
   ]
   */
 	const pagesRoutes = pagePaths
-		.map((path) => {
-			const parts = path.split(src)[1]?.split("/").filter(Boolean) ?? [];
+		.map((filePath) => {
+			const parts = filePath.split(src)[1]?.split(path.sep).filter(Boolean) ?? [];
 
 			const url: string[] = [];
 

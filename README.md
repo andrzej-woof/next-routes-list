@@ -38,7 +38,7 @@ npm run generate-next-routes-list
 
 ### 2. Import routes
 ```ts
-import { routes } from 'next-routes-list'
+import { routes, getNextRoutes } from 'next-routes-list'
 
 console.log(routes)
 /**
