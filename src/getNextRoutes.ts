@@ -6,28 +6,33 @@ export const getNextRoutes = (
 	src: string = ".",
 	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
 ) => {
+  const dottedExtensions = extensions.map((ext) => ext.startsWith(".") ? ext : `.${ext}`);
 	// next app routes
 	// if app exists
-	let appPaths: string[] = [];
+	const appPaths: string[] = [];
   const appPath = path.join(src, 'app');
 	if (fs.existsSync(appPath)) {
-		appPaths = listPaths(appPath, { includeFiles: true }).filter((filePath) => {
+		listPaths(appPath, { includeFiles: true }).forEach((filePath) => {
       const { ext, name } = path.parse(filePath);
-			return ext && extensions.includes(ext) && name === "page";
+			if (ext && dottedExtensions.includes(ext) && name === "page") {
+        appPaths.push(filePath);
+      }
 		});
 	}
 
 	// next pages routes
-	let pagePaths: string[] = [];
+	const pagePaths: string[] = [];
   const pagesPath = path.join(src, 'pages');
 	if (fs.existsSync(pagesPath)) {
-		pagePaths = listPaths(pagesPath, { includeFiles: true }).filter(
+		listPaths(pagesPath, { includeFiles: true }).forEach(
 			(filePath) => {
-				if (filePath?.includes(`${path.sep}pages${path.sep}api${path.sep}`)) {
-          return false;
+				if (filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`)) {
+          return;
         }
         const { ext } = path.parse(filePath);
-				return ext && extensions.includes(ext);
+				if (ext && dottedExtensions.includes(ext)) {
+          pagePaths.push(filePath);
+        }
 			}
 		);
 	}
