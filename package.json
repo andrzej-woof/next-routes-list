@@ -32,7 +32,8 @@
 	},
 	"devDependencies": {
 		"@types/node": "^20.10.7",
-		"typescript": "latest"
+		"typescript": "latest",
+		"vitest": "^2.1.1"
 	},
 	"engines": {
 		"node": ">=20"
