@@ -1,7 +1,33 @@
 {
-	"extends": "@emiyaaaaa/tsconfig",
 	"compilerOptions": {
-		"outDir": "dist"
+		"outDir": "dist",
+		"strict": true,
+		"module": "node16",
+		"moduleResolution": "node16",
+		"moduleDetection": "force",
+		"target": "ES2015",
+		"lib": [
+			"DOM",
+			"ES2015"
+		],
+		"jsx": "react",
+		"allowJs": true,
+    "allowUnreachableCode": false,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"declaration": true,
+		"newLine": "lf",
+		"noImplicitReturns": true,
+		"noImplicitOverride": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noEmitOnError": true,
+		"useDefineForClassFields": true,
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
 	},
-	"exclude": ["test"]
+  "exclude": ["test"],
 }
