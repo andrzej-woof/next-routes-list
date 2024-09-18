@@ -1,31 +1,33 @@
 import fs from "node:fs";
+import path from "node:path";
 import listPaths from "list-paths";
 
-export function getNextRoutes(
-	src = "./",
-	extensions = ["tsx", "ts", "js", "jsx", "mdx"]
-) {
+export const getNextRoutes = (
+	src: string = ".",
+	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
+) => {
 	// next app routes
 	// if app exists
 	let appPaths: string[] = [];
-	if (fs.existsSync(`${src}app`)) {
-		appPaths = listPaths(`${src}app`, { includeFiles: true }).filter((path) => {
-			const file = path.split("/").at(-1);
-			const filename = file?.split(".").at(-2);
-			const extension = file?.split(".").at(-1);
-			return extension && extensions.includes(extension) && filename === "page";
+  const appPath = path.join(src, 'app');
+	if (fs.existsSync(appPath)) {
+		appPaths = listPaths(appPath, { includeFiles: true }).filter((filePath) => {
+      const { ext, name } = path.parse(filePath);
+			return ext && extensions.includes(ext) && name === "page";
 		});
 	}
 
 	// next pages routes
 	let pagePaths: string[] = [];
-	if (fs.existsSync(`${src}pages`)) {
-		pagePaths = listPaths(`${src}pages`, { includeFiles: true }).filter(
-			(path) => {
-				if (path?.includes("/pages/api/")) return false;
-				const file = path.split("/").at(-1);
-				const extension = file?.split(".").at(-1);
-				return extension && extensions.includes(extension);
+  const pagesPath = path.join(src, 'pages');
+	if (fs.existsSync(pagesPath)) {
+		pagePaths = listPaths(pagesPath, { includeFiles: true }).filter(
+			(filePath) => {
+				if (filePath?.includes(`${path.sep}pages${path.sep}api${path.sep}`)) {
+          return false;
+        }
+        const { ext } = path.parse(filePath);
+				return ext && extensions.includes(ext);
 			}
 		);
 	}
