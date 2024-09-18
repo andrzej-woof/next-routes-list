@@ -2,40 +2,29 @@ import fs from "node:fs";
 import path from "node:path";
 import listPaths from "list-paths";
 
+const getFilePaths = (dirPath: string, validExtensions?: string[], validName?: string): string[] => {
+  if (!fs.existsSync(dirPath)) return [];
+  return listPaths(dirPath, { includeFiles: true }).filter(
+    (filePath) => {
+      const { ext, name } = path.parse(filePath);
+			return (!validExtensions?.length || ext && validExtensions.includes(ext)) && (!validName || name === validName);
+    }
+  );
+};
+
 export const getNextRoutes = (
 	src: string = ".",
 	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
 ) => {
   const dottedExtensions = extensions.map((ext) => ext.startsWith(".") ? ext : `.${ext}`);
+
 	// next app routes
-	// if app exists
-	const appPaths: string[] = [];
   const appPath = path.join(src, 'app');
-	if (fs.existsSync(appPath)) {
-		listPaths(appPath, { includeFiles: true }).forEach((filePath) => {
-      const { ext, name } = path.parse(filePath);
-			if (ext && dottedExtensions.includes(ext) && name === "page") {
-        appPaths.push(filePath);
-      }
-		});
-	}
+	const appPaths = getFilePaths(appPath, dottedExtensions, 'page')
 
 	// next pages routes
-	const pagePaths: string[] = [];
   const pagesPath = path.join(src, 'pages');
-	if (fs.existsSync(pagesPath)) {
-		listPaths(pagesPath, { includeFiles: true }).forEach(
-			(filePath) => {
-				if (filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`)) {
-          return;
-        }
-        const { ext } = path.parse(filePath);
-				if (ext && dottedExtensions.includes(ext)) {
-          pagePaths.push(filePath);
-        }
-			}
-		);
-	}
+	const pagePaths = getFilePaths(pagesPath, dottedExtensions).filter((filePath) => !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`));
 
 	/**
   appRoutes = [
