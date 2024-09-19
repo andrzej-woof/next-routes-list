@@ -39,10 +39,12 @@ npm run generate-next-routes-list
 ```
 
 ### 2. Import routes
-```ts
-import { routes, getNextRoutes } from 'next-routes-list'
+TODO: incomplete readme, but basically you can call `getNextRoutesWithMatchers` and have a list of all routes + regular expression that you can use to test URL.pathname
 
-console.log(routes)
+```ts
+import { getNextRoutesWithMatchers } from 'next-routes-list'
+
+console.log(getNextRoutesWithMatchers())
 /**
 [
   '/',
