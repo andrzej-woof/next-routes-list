@@ -27,9 +27,6 @@
 		"prepublishOnly": "npm run build",
 		"test": "npm run build && cd test/next-project && node ../../dist/generate.js && node -e 'JSON.stringify(require(\"../routes.js\").routes)===JSON.stringify(require(\"../../dist/routes.js\").routes) ? console.log(\"app route test succeeded\") : console.log(\"app route test failed\")'"
 	},
-	"dependencies": {
-		"list-paths": "1.0.2"
-	},
 	"devDependencies": {
 		"@types/node": "^20.10.7",
 		"typescript": "latest",

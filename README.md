@@ -1,5 +1,7 @@
 # next-routes-list
-Easy generate all available routes in Next.js .
+Forked from https://github.com/Emiyaaaaa/next-routes-list
+
+Generate list of routes based on Next.js source code
 
 ## Support
 - [x] App routes
@@ -7,7 +9,7 @@ Easy generate all available routes in Next.js .
 
 ## Install
 ```bash
-npm install --save-dev next-routes-list@latest
+pnpm add next-routes-list -D
 ```
 
 ## Usage

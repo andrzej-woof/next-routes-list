@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      list-paths:
-        specifier: 1.0.2
-        version: 1.0.2
     devDependencies:
       '@types/node':
         specifier: ^20.10.7
@@ -328,9 +324,6 @@ packages:
 
   get-func-name@2.0.2:
     resolution: {integrity: sha512-8vXOvuE167CtIc3OyItco7N/dpRtBbYOsPsXCz7X/PMnlGjYjSGuZJgM1Y7mmew7BKf9BqvLX2tnOVy1BBUsxQ==}
-
-  list-paths@1.0.2:
-    resolution: {integrity: sha512-WHoT4mLs3QT+V1g166Py74atZK+Ae6K4BjOocNccHCZUaZLWfr+6luGdAIWMTCi4XIIJMHzYh9CtTa8tBF4Vbw==}
 
   loupe@3.1.1:
     resolution: {integrity: sha512-edNu/8D5MKVfGVFRhFf8aAxiTM6Wumfz5XsaatSxlD3w4R1d/WEKUTydCdPGbl9K7QG/Ca3GnDV2sIKIpXRQcw==}
@@ -693,8 +686,6 @@ snapshots:
     optional: true
 
   get-func-name@2.0.2: {}
-
-  list-paths@1.0.2: {}
 
   loupe@3.1.1:
     dependencies:

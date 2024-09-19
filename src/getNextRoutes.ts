@@ -1,15 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
-import listPaths from "list-paths";
+import { routeToRegex } from "./utils";
 
 const getFilePaths = (dirPath: string, validExtensions?: string[], validName?: string): string[] => {
   if (!fs.existsSync(dirPath)) return [];
-  return listPaths(dirPath, { includeFiles: true }).filter(
-    (filePath) => {
-      const { ext, name } = path.parse(filePath);
+  return fs.readdirSync(dirPath, { recursive: true, withFileTypes: true }).filter(
+    (file) => {
+      if (!file.isFile()) {
+        return false;
+      }
+      const { ext, name } = path.parse(file.name);
 			return (!validExtensions?.length || ext && validExtensions.includes(ext)) && (!validName || name === validName);
     }
-  );
+  ).map((file) => path.join(file.path, file.name));
 };
 
 const isPrivateRoute = (part: string) => part.startsWith("_");
@@ -20,7 +23,6 @@ const isGroupRoute = (part: string) => part.startsWith("(") && part.endsWith(")"
 
 const isAppIgnoredRoute = (part: string) => isPrivateRoute(part) || isParallelRoute(part) || isInterceptingRoute(part);
 
-
 export const getNextRoutes = (
 	src: string = ".",
 	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
@@ -29,9 +31,9 @@ export const getNextRoutes = (
   const dottedExtensions = extensions.map((ext) => ext.startsWith(".") ? ext : `.${ext}`);
 
   const appRoot = path.join(absoluteSrc, 'app');
-	const appPaths = getFilePaths(appRoot, dottedExtensions, 'page')
+	const appPaths = getFilePaths(appRoot, dottedExtensions, 'page');
 	const pagePaths = getFilePaths(path.join(absoluteSrc, 'pages'), dottedExtensions).filter((filePath) => !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`));
-
+  
   const mapToRoutes = (paths: string[]): string[] => {
     return paths
       .map((filePath) => {
@@ -71,6 +73,17 @@ export const getNextRoutes = (
 
   const appRoutes = mapToRoutes(appPaths);
   const pagesRoutes = mapToRoutes(pagePaths);
+  return Array.from(new Set([...appRoutes, ...pagesRoutes])).sort();
+};
 
-  return Array.from(new Set([...appRoutes, ...pagesRoutes]));
+
+export const getNextRoutesWithMatchers = (
+	src: string = ".",
+	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
+): { route: string, regex: RegExp }[] => {
+  const routes = getNextRoutes(src, extensions);
+  return routes.map((route) => ({
+    route,
+    regex: routeToRegex(route),
+  }))
 };
