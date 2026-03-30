@@ -1,6 +1,6 @@
 {
 	"name": "@pigsty/next-routes-list",
-	"version": "1.3.0",
+	"version": "1.3.1",
 	"description": "generate next all routes list",
 	"keywords": [
 		"next",
@@ -28,9 +28,9 @@
 		"test": "npm run build && cd test/next-project && node ../../dist/generate.js && node -e 'JSON.stringify(require(\"../routes.js\").routes)===JSON.stringify(require(\"../../dist/routes.js\").routes) ? console.log(\"app route test succeeded\") : console.log(\"app route test failed\")'"
 	},
 	"devDependencies": {
-		"@types/node": "^20.10.7",
+		"@types/node": "^20.19.37",
 		"typescript": "latest",
-		"vitest": "^2.1.1"
+		"vitest": "^2.1.9"
 	},
 	"engines": {
 		"node": ">=20"

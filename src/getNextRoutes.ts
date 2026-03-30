@@ -2,50 +2,70 @@ import fs from "node:fs";
 import path from "node:path";
 import { routeToRegex } from "./utils";
 
-const getFilePaths = (dirPath: string, validExtensions?: string[], validName?: string): string[] => {
+const getFilePaths = (
+  dirPath: string,
+  validExtensions?: string[],
+  validName?: string
+): string[] => {
   if (!fs.existsSync(dirPath)) return [];
-  return fs.readdirSync(dirPath, { recursive: true, withFileTypes: true }).filter(
-    (file) => {
+  return fs
+    .readdirSync(dirPath, { recursive: true, withFileTypes: true })
+    .filter((file) => {
       if (!file.isFile()) {
         return false;
       }
       const { ext, name } = path.parse(file.name);
-			return (!validExtensions?.length || ext && validExtensions.includes(ext)) && (!validName || name === validName);
-    }
-  ).map((file) => path.join(file.path, file.name));
+      return (
+        (!validExtensions?.length || (ext && validExtensions.includes(ext))) &&
+        (!validName || name === validName)
+      );
+    })
+    .map((file) => path.join(file.path ?? file.parentPath, file.name));
 };
 
 const isPrivateRoute = (part: string) => part.startsWith("_");
-const isInterceptingRoute = (part: string) => part.startsWith("(") && !part.endsWith(")");
+const isInterceptingRoute = (part: string) =>
+  part.startsWith("(") && !part.endsWith(")");
 const isParallelRoute = (part: string) => part.startsWith("@");
 
-const isGroupRoute = (part: string) => part.startsWith("(") && part.endsWith(")");
+const isGroupRoute = (part: string) =>
+  part.startsWith("(") && part.endsWith(")");
 
-const isAppIgnoredRoute = (part: string) => isPrivateRoute(part) || isParallelRoute(part) || isInterceptingRoute(part);
+const isAppIgnoredRoute = (part: string) =>
+  isPrivateRoute(part) || isParallelRoute(part) || isInterceptingRoute(part);
 
 export const getNextRoutes = (
-	src: string = ".",
-	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
+  src: string = ".",
+  extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
 ) => {
   const absoluteSrc = path.resolve(src);
-  const dottedExtensions = extensions.map((ext) => ext.startsWith(".") ? ext : `.${ext}`);
+  const dottedExtensions = extensions.map((ext) =>
+    ext.startsWith(".") ? ext : `.${ext}`
+  );
 
-  const appRoot = path.join(absoluteSrc, 'app');
-	const appPaths = getFilePaths(appRoot, dottedExtensions, 'page');
-	const pagePaths = getFilePaths(path.join(absoluteSrc, 'pages'), dottedExtensions).filter((filePath) => !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`));
-  
+  const appRoot = path.join(absoluteSrc, "app");
+  const appPaths = getFilePaths(appRoot, dottedExtensions, "page");
+  const pagePaths = getFilePaths(
+    path.join(absoluteSrc, "pages"),
+    dottedExtensions
+  ).filter(
+    (filePath) =>
+      !filePath.includes(`${path.sep}pages${path.sep}api${path.sep}`)
+  );
+
   const mapToRoutes = (paths: string[]): string[] => {
     return paths
       .map((filePath) => {
         const isApp = filePath.startsWith(appRoot);
-        const parts = filePath.split(absoluteSrc)[1]?.split(path.sep).filter(Boolean) ?? [];
+        const parts =
+          filePath.split(absoluteSrc)[1]?.split(path.sep).filter(Boolean) ?? [];
         const urlParts: string[] = [];
 
         for (let i = 1; i < parts.length; i++) {
           let part = parts[i] as string;
 
           if (isApp && isAppIgnoredRoute(part)) {
-            return '';
+            return "";
           }
 
           if (isApp && isGroupRoute(part)) {
@@ -76,14 +96,13 @@ export const getNextRoutes = (
   return Array.from(new Set([...appRoutes, ...pagesRoutes])).sort();
 };
 
-
 export const getNextRoutesWithMatchers = (
-	src: string = ".",
-	extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
-): { route: string, regex: RegExp }[] => {
+  src: string = ".",
+  extensions: string[] = ["tsx", "ts", "js", "jsx", "mdx"]
+): { route: string; regex: RegExp }[] => {
   const routes = getNextRoutes(src, extensions);
   return routes.map((route) => ({
     route,
     regex: routeToRegex(route),
-  }))
+  }));
 };
